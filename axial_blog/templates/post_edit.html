@@ -1,0 +1,48 @@
+<div>
+	<form method="POST">
+		{{error}}
+		{{slug_form.as_p}}
+		{{form.as_p}}
+		<input type="button" id="btnAdd" value="add tag"/>
+		<input type="button" id="btnDel" value="remove tag"><br/>
+		<div id="input1" class="clonedInput">
+		<p>tags:</p>
+		{{formset.as_table}}
+		</div>
+		<input type="submit" value="Submit" />
+	</form>
+</div>
+
+<script language="javascript" type="text/javascript" src="/site_media/scripts/jquery.js"></script>
+<script language="javascript" type="text/javascript">
+	$(function () {
+
+		$('#btnAdd').click(function(){
+			var num = parseInt($('#id_form-TOTAL_FORMS').val());
+			var zero_index_num = new Number(num -1);
+			var new_form_num = new Number(zero_index_num +1);
+			var new_div_num = new Number(zero_index_num +2);
+			var newElem = $('#id_form-'+zero_index_num+'-name').clone().attr('id', 'id_form-'+new_form_num+'-name').attr('name', 'form-'+new_form_num+'-name');
+			$('#id_form-TOTAL_FORMS').val(new_div_num);
+			$('#id_form-INITIAL_FORMS').val(new_div_num);
+			$('#id_form-'+zero_index_num+'-name').after(newElem);
+			$('#btnDel').attr('disabled','');
+			if (new_div_num == 10)
+				$('#btnAdd').attr('disabled','disabled');
+			}
+		);
+
+		$('#btnDel').click(function(){
+			var num = parseInt($('#id_form-TOTAL_FORMS').val());
+			var form_to_remove = new Number(num -1);
+			$('#id_form-TOTAL_FORMS').val(num -1);
+			$('#id_form-INITIAL_FORMS').val(num -1);
+			$('#id_form-'+form_to_remove+'-name').remove();
+			$('#btnAdd').attr('disabled','');
+			if (num-1==1)
+				$('#btnDel').attr('disabled','disabled');
+			}
+		);
+
+	})
+</script>

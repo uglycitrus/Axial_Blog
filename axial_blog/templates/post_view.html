@@ -1,0 +1,13 @@
+<div>
+	<h3>{{post.title}}</h3>
+	<p>{{post.body}}</p>
+</div>
+<div>
+	<table>
+		{% for i in tags %}
+		<tr>
+			<td><a href="{% url post_list i.name %}">{{i.name}}</a></td>
+		</tr>
+		{% endfor %}
+	</table>
+</div>

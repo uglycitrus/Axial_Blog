@@ -1,0 +1,12 @@
+{% extends "posts.html" %}
+
+{% block new_button %}
+<a href="{% url new_post %}">Create New Post</a>
+{% endblock %}
+
+{% block view_link %}
+{% endblock %}
+
+{% block edit_link %}
+		<td><a href="{% url post_edit i.slug %}">{{i.title}}</a></td>
+{% endblock %}
