@@ -1,7 +1,8 @@
 {% extends "posts.html" %}
 
 {% block new_button %}
-<a href="{% url new_post %}">Create New Post</a>
+<a href="{% url new_post %}">Create New Post</a><br/>
+<a href="{% url logout %}">Logout</a><hr/>
 {% endblock %}
 
 {% block view_link %}

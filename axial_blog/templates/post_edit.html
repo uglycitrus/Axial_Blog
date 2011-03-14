@@ -1,4 +1,6 @@
 <div>
+	<a href="{% url edit_posts %}">Edit Other Posts</a><br/>
+	<a href="{% url logout %}">Logout</a><hr/>
 	<form method="POST">
 		{{error}}
 		{{slug_form.as_p}}
