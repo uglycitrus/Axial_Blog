@@ -9,6 +9,7 @@ import datetime
 
 from datetime import timedelta
 
+from django.test.client import Client
 from django.test import TestCase
 from django.contrib.auth.models import User
 
@@ -31,42 +32,64 @@ from myproject.blog.models import Tag
 
 
 class BlogTest(unittest.TestCase):
-	def setUP(self):
+	
+	def setUp(self):
+		self.user = User.objects.create(username = "user1")
+		self.post1 = BlogPost.objects.create(title="This is Post#1", slug="post-1", body="woohoo yippee!",author=self.user)
+		self.tag1 = Tag.objects.create(name="This-is-Tag#1")
+
+	def SavePosts(self):
 		"""
+		Confirms that BlogPosts need unique slug, but all other fields can be identical
+		Confirms that BlogPosts won't be saved w/o title, slug, body, and author
+		!!! CANNOT FIGURE OUT HOW TO MAKE SURE ALL SLUGS SAVED IN THE DATABASE ARE SLUGS NOT CHARS!!!
 		confirms we can't have multiple posts with the same title or tags with the same name
 		"""
-		u = User.objects.all()[0]
-		self.post1 = BlogPost.objects.create(title="This is Post#1",body="woohoo yippee!",author=u)
-		self.post2 = BlogPost.objects.create(title="This is Post#2",body="woohoo yippee!",author=u)
-		self.post3 = BlogPost.objects.create(title="This is Post#2",body="woohoo yippee!",author=u)
-		self.tag1 = Tag.objects.create(name="This is Tag#1")
-		self.tag2 = Tag.objects.create(name="This is Tag#2")
-		self.tag3 = Tag.objects.create(name="This is Tag#2")
+		try:
+			(BlogPost.objects.create(title="This is Post#1", slug="post-1", body="woohoo yippee!",author=u))
+			Cannot_save_post_with_same_name = False
+		except:
+			Cannot_save_post_with_same_name = True
+		self.assertTrue(Cannot_save_post_with_same_name)
+		self.assertEqual(BlogPost.objects.count(), 1)
+		self.post2 = BlogPost.objects.create(title="This is Post#1", slug="1-post", body="woohoo yippee!",author=self.user)
 		self.assertEqual(BlogPost.objects.count(), 2)
+
+	def SaveTags(self):
+		"""
+		Confirms that Tags need unique names in slug form
+		!!! CANNOT FIGURE OUT HOW TO MAKE SURE ALL SLUGS SAVED IN THE DATABASE ARE SLUGS NOT CHARS!!!
+		"""
+		self.assertEqual(Tag.objects.count(), 1)
+		try:
+			Tag.objects.create(name="This-is-Tag#1")
+			Cannot_save_tag_with_same_name = False
+		except:
+			Cannot_save_tag_with_same_name = True
+		self.assertTrue(Cannot_save_tag_with_same_name)
+		self.tag2 = Tag.objects.create(name="This-is-Tag#2")
+		self.assertTrue(self.tag2)
 		self.assertEqual(Tag.objects.count(), 2)
 
-	def testDates(self):
+	def AddTags(self):
 		"""
-		confirms that created dates are actually today, and edited dates are independent of created dates
+		confirms that the same tag cannot be added to a post multiple times, but multiple different tags can
 		"""
-		u = User.objects.all()[0]
-		self.post4 = BlogPost.objects.create(title="This is Post#4",body="woohoo yippee!",author=u) #create post
-		self.assertEqual(self.post1.created_date, datetime.date.today())
-		self.post1.created_date = self.post1.created_date - timedelta(days = 1)  #set created date to yesterday
-		self.post1.save() #save it
-		self.post1.save() #save it with custom save function to make sure created date isn't overwritten
-		self.assertEqual(self.post1.edited_date, datetime.date.today())
-		self.assertEqual(self.post1.created_date, datetime.date.today() - timedelta(days = 1))
-		self.tag1 = Tag.objects.create(name="This is Tag#1")
-		self.assertEqual(self.tag1.created_date, datetime.date.today())
+		self.tag2 = Tag.objects.create(name="This-is-Tag#2")
+		self.tag3 = Tag.objects.create(name="This-is-Tag#3")
+		self.post2 = BlogPost.objects.create(title="This is Post#2", slug="post-2", body="woohoo yippee!",author=self.user)
+		self.post3 = BlogPost.objects.create(title="This is Post#3", slug="post-3", body="woohoo yippee!",author=self.user)
+		self.post3.tags.add(self.tag2)
+		self.post3.tags.add(self.tag3)
+		self.assertEqual(self.post3.tags.count(), 2)
+		self.post3.tags.add(self.tag3)
+		self.assertEqual(self.post3.tags.count(), 2)
 
-	def testAddTags(self):
-		u = User.objects.all()[0]
-		self.post1 = BlogPost.objects.create(title="This is Post#1",body="woohoo yippee!",author=u)
-		self.post2 = BlogPost.objects.create(title="This is Post#2",body="woohoo yippee!",author=u)
-		self.tag1 = Tag.objects.create(name="This is Tag#1")
-		self.tag2 = Tag.objects.create(name="This is Tag#2")
-		self.tag3 = Tag.objects.create(name="This is Tag#3")
-		self.tag3.posts.add(self.post1)
-		self.tag3.posts.add(self.post2)
-		self.assertEqual(self.tag3.posts.count(), 2)
+	def Posts(self):
+		c = Client()
+		response = c.get('/posts/')
+		self.assertEqual(response.status_code, 200)
+	
+	def PostsView(self):
+		c = Client()
+		self.assertRaises("TemplateDoesNotExist: 404.html", c.get('/posts/non-existent-post'))
