@@ -5,7 +5,6 @@ from django.contrib.auth.models import User
 
 class Tag(models.Model):
 	name = models.SlugField(
-		"", 
 		max_length = "50",
 		unique = True
 		)
