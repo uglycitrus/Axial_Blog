@@ -13,7 +13,8 @@ urlpatterns = patterns('myproject.blog.views',
  	url(r'^posts/edit/(?P<post_slug>[-\w]+)', 'post_edit', name = 'post_edit'),
  	url(r'^posts/view/(?P<post_slug>[-\w]+)', 'post_view', name = 'post_view'),
  	url(r'^posts/$', 'all_posts', name = 'all_posts'),
- 	url(r'^posts/(?P<tag_name>[-\w]+)', 'post_list', name = 'post_list'),
+ 	url(r'^posts/(?P<tag_slug>[-\w]+)', 'post_list', name = 'post_list'),
+ 	url(r'^$', 'all_posts', name = 'all_posts'),
 	# Example:
 	# (r'^axial_blog/', include('axial_blog.foo.urls')),
 
@@ -28,6 +29,3 @@ urlpatterns += patterns('',
         (r'^site_media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': os.path.split(os.path.split(os.path.dirname(os.path.abspath(__file__)))[0])[0]+'/static_media'}),
     )
 
-urlpatterns += patterns('myproject.blog.views',
- 	url(r'^.*$', 'all_posts', name = 'all_posts'),
-)

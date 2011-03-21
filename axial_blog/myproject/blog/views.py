@@ -123,8 +123,8 @@ def edit_posts(request):
 	posts = BlogPost.objects.all()
 	return render_to_response('edit_posts.html',{'posts':posts})
 
-def post_list(request, tag_name):
-	tags = get_object_or_404(Tag, name = tag_name)
+def post_list(request, tag_slug):
+	tags = get_object_or_404(Tag, slug = tag_slug)
 	posts = tags.blogpost_set.all()
 	return render_to_response('posts.html',{'posts':posts})
 

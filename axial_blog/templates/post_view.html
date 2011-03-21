@@ -6,7 +6,7 @@
 	<table>
 		{% for i in tags %}
 		<tr>
-			<td><a href="{% url post_list i.name %}">{{i.name}}</a></td>
+			<td><a href="{% url post_list i.slug %}">{{i.name}}</a></td>
 		</tr>
 		{% endfor %}
 	</table>

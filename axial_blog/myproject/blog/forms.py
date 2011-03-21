@@ -26,7 +26,7 @@ class BlogPostSlugForm(forms.Form):
 		)
 
 class TagForm(forms.Form):
-	name = forms.SlugField(
+	name = forms.CharField(
 		max_length = 50,
 		label="",
 		)
