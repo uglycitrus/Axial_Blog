@@ -1,4 +1,7 @@
-<div>
+{% extends "blog_base.html" %}
+
+{% block content %}
+<div id="content">
 	{{error}}
 	<form method = "POST" action="">
 		<label for = "username">username: {{form.username}}</label>
@@ -6,3 +9,4 @@
 		<input type = "submit" value = "login"/>
 	</form>
 </div>
+{% endblock content %}

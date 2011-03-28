@@ -1,3 +1,6 @@
+{% extends "blog_base.html" %}
+
+{% block content %}
 <div>
 	<h3>{{post.title}}</h3>
 	<p>{{post.body}}</p>
@@ -11,3 +14,4 @@
 		{% endfor %}
 	</table>
 </div>
+{% endblock content %}

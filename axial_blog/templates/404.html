@@ -1,2 +1,8 @@
-<p>You've been 404'ed</p>
-<a href="{% url all_posts %}">Go back to all posts</a>
+{% extends "blog_base.html" %}
+
+{% block content %}
+<div id="content">
+	<p>You've been 404'ed</p>
+	<a href="{% url all_posts %}">Go back to all posts</a>
+</div>
+{% endblock content %}

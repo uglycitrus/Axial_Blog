@@ -1,18 +1,24 @@
+{% extends "blog_base.html" %}
+
+{% block content %}
+<div id="content">
 {% block new_button %}
-{% endblock %}
-<table>
-	<tr>
-		<th>Date</th>
-		<th>Post</th>
-	</tr>
-	{% for i in posts %}
-	<tr>
-		<td>{{i.edited_date}}</td>
-		{% block view_link %}
-		<td><a href="{% url post_view i.slug %}">{{i.title}}</a></td>
-		{% endblock %}
-		{% block edit_link %}
-		{% endblock %}
-	</tr>
-	{% endfor %}
-</table>
+{% endblock new_button %}
+	<table>
+		<tr>
+			<th>Date</th>
+			<th>Post</th>
+		</tr>
+		{% for i in posts %}
+		<tr>
+			<td>{{i.edited_date}}</td>
+			{% block view_link %}
+			<td><a href="{% url post_view i.slug %}">{{i.title}}</a></td>
+			{% endblock %}
+			{% block edit_link %}
+			{% endblock %}
+		</tr>
+		{% endfor %}
+	</table>
+</div>
+{% endblock content %}

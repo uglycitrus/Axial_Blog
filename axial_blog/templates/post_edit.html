@@ -1,16 +1,18 @@
-<div>
+{% extends "blog_base.html" %}
+
+{% block content %}
+<div id="content">
 	<a href="{% url edit_posts %}">Edit Other Posts</a><br/>
 	<a href="{% url logout %}">Logout</a><hr/>
 	<form method="POST">
 		{{error}}
 		{{slug_form.as_p}}
 		{{form.as_p}}
-		<input type="button" id="btnAdd" value="add tag"/>
-		<input type="button" id="btnDel" value="remove tag"><br/>
-		<div id="input1" class="clonedInput">
-		<p>tags:</p>
-		{{formset.as_table}}
-		</div>
+		<label>tags:</label>
+		<input type="button" id="btnAdd" value="add tag"/><br/>
+		<table>
+			{{formset.as_table}}
+		</table>
 		<input type="submit" value="Submit" />
 	</form>
 </div>
@@ -18,33 +20,69 @@
 <script language="javascript" type="text/javascript" src="/site_media/scripts/jquery.js"></script>
 <script language="javascript" type="text/javascript">
 	$(function () {
+		var num = parseInt($('#id_form-TOTAL_FORMS').val());
+		for(i = 0; i < num; i++){
+			var correct_this_child = new Number(i + 1)
+			$('table tr:nth-child('+correct_this_child+')').attr('id','tr'+i);
+			$('table tr#tr'+i+' th').remove();
+			$('table tr#tr'+i+' td').attr('id','td'+i);
+			$('#td'+i).append('<input type="button" class="btnDel" thing="'+i+'" value="remove tag">');
+		}
 
 		$('#btnAdd').click(function(){
 			var num = parseInt($('#id_form-TOTAL_FORMS').val());
 			var zero_index_num = new Number(num -1);
 			var new_form_num = new Number(zero_index_num +1);
 			var new_div_num = new Number(zero_index_num +2);
-			var newElem = $('#id_form-'+zero_index_num+'-name').clone().attr('id', 'id_form-'+new_form_num+'-name').attr('name', 'form-'+new_form_num+'-name');
 			$('#id_form-TOTAL_FORMS').val(new_div_num);
 			$('#id_form-INITIAL_FORMS').val(new_div_num);
-			$('#id_form-'+zero_index_num+'-name').after(newElem);
-			$('#btnDel').attr('disabled','');
+			if (num == 0){
+				$('table').append('<tr id="tr'+new_form_num+'"><td id="dt'+new_form_num+'"></td></tr>');
+			}
+			else{
+				$('table tr:nth-child('+num+')').after('<tr id="tr'+new_form_num+'"><td id="dt'+new_form_num+'"></td></tr>');
+			}
+			$('#dt'+new_form_num).append('<input id="id_form-'+new_form_num+'-name" type="text" name="form-'+new_form_num+'-name" maxlength="50" />');
+			$('#dt'+new_form_num).append('<input type="button" class="btnDel" thing="'+new_form_num+'" value="remove tag">');
+			$('.btnDel').bind("click", function(){
+				var form_to_remove = parseInt($(this).attr('thing'));
+				var forms = parseInt($('#id_form-TOTAL_FORMS').val());
+				$('#id_form-TOTAL_FORMS').val(forms -1);
+				$('#id_form-INITIAL_FORMS').val(forms -1);
+				$('#tr'+form_to_remove).remove();
+				$('#btnAdd').attr('disabled','');
+				for(i = 0; i < forms; i++){
+					var correct_this_child = new Number(i + 1)
+					$('table tr:nth-child('+correct_this_child+')').attr('id','tr'+i);
+					$('table tr#tr'+i+' th').remove();
+					$('table tr#tr'+i+' td').attr('id','td'+i);
+					$('table tr#tr'+i+' td input#id_form-'+correct_this_child+'-name').attr('id', 'id_form-'+i+'-name')
+					$('table tr#tr'+i+' td input#id_form-'+i+'-name').attr('name', 'form-'+i+'-name')
+					$('table tr#tr'+i+' td input.btnDel').attr('thing', i)
+					}
+			});
 			if (new_div_num == 10)
 				$('#btnAdd').attr('disabled','disabled');
-			}
-		);
+		});
 
-		$('#btnDel').click(function(){
-			var num = parseInt($('#id_form-TOTAL_FORMS').val());
-			var form_to_remove = new Number(num -1);
-			$('#id_form-TOTAL_FORMS').val(num -1);
-			$('#id_form-INITIAL_FORMS').val(num -1);
-			$('#id_form-'+form_to_remove+'-name').remove();
+		$("input.btnDel").click(function(){
+			var form_to_remove = parseInt($(this).attr('thing'));
+			var forms = parseInt($('#id_form-TOTAL_FORMS').val());
+			$('#id_form-TOTAL_FORMS').val(forms -1);
+			$('#id_form-INITIAL_FORMS').val(forms -1);
+			$('#tr'+form_to_remove).remove();
 			$('#btnAdd').attr('disabled','');
-			if (num-1==1)
-				$('#btnDel').attr('disabled','disabled');
+			for(i = 0; i < forms; i++){
+				var correct_this_child = new Number(i + 1)
+				$('table tr:nth-child('+correct_this_child+')').attr('id','tr'+i);
+				$('table tr#tr'+i+' th').remove();
+				$('table tr#tr'+i+' td').attr('id','td'+i);
+				$('table tr#tr'+i+' td input#id_form-'+correct_this_child+'-name').attr('id', 'id_form-'+i+'-name')
+				$('table tr#tr'+i+' td input#id_form-'+i+'-name').attr('name', 'form-'+i+'-name')
+				$('table tr#tr'+i+' td input.btnDel').attr('thing', i)
 			}
-		);
+		});
 
 	})
 </script>
+{% endblock content %}
